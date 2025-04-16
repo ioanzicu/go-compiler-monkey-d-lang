@@ -2,6 +2,21 @@
 
 | Source Code | -> | Tokens | -> | Abstract Syntax Tree |
 
+___
+
+# The MONKEY D. Programming Language Compiler
+
+### Flow thorugh Modules
+
+| 1. Source Code | -> | 2. LEXER  | -> | 3. PARSER | -> | 4. COMPILER | -> | 5. VIRTUAL MACHINE |
+
+___
+
+### Data Structures
+
+| 1. String | -> | 2. Tokens | -> | 3. Abstract Syntax Tree | -> | 4. Bytecode | -> | 5. Objects |
+
+___
 
 ## Major Parts
 

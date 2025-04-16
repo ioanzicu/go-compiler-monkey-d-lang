@@ -1,9 +1,3 @@
-# The MONKEY D. Programming Language Interpreter
-
-| Source Code | -> | Tokens | -> | Abstract Syntax Tree |
-
-___
-
 # The MONKEY D. Programming Language Compiler
 
 ### Flow thorugh Modules
@@ -25,6 +19,19 @@ ___
 - the Abstract Syntax Tree (AST)
 - the internal object system
 - the evaluator
+- the compuler
+- the virtual machine
+
+
+#### Opcode - operation Code
+
+- one byte wide
+- has arbitrary but unique value
+- is the first byte in the instruction
+
+
+## Virtual Machine is based on the Stack (stack machine)
+
 
 
 ## Features

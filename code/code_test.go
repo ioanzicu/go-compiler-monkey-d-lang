@@ -39,7 +39,7 @@ func TestInstructionString(t *testing.T) {
 	instructions := []Instructions{
 		Make(OpConstant, 1),
 		Make(OpConstant, 2),
-		Make(OpConstant, 65536),
+		Make(OpConstant, 65535),
 	}
 
 	expected := `0000 OpConstant 1

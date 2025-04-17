@@ -43,6 +43,7 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 
 	for _, tt := range tests {
 		program := parse(tt.input)
+		fmt.Printf("program: %+v", program)
 
 		compiler := New()
 		err := compiler.Compile(program)

@@ -19,6 +19,39 @@ func New() *Compiler {
 }
 
 func (c *Compiler) Compile(node ast.Node) error {
+	switch node := node.(type) {
+	case *ast.Program:
+		// iterate over the statements
+		for _, s := range node.Statements {
+			// call Compile recursively
+			err := c.Compile(s)
+			if err != nil {
+				return err
+			}
+		}
+
+	case *ast.ExpressionStatement:
+		err := c.Compile(node.Expression)
+		if err != nil {
+			return err
+		}
+
+	case *ast.InfixExpression:
+		err := c.Compile(node.Left)
+		if err != nil {
+			return err
+		}
+
+		err = c.Compile(node.Right)
+		if err != nil {
+			return err
+		}
+
+	case *ast.IntegerLiteral:
+		integer := &object.Integer{Value: node.Value}
+		c.emit(code.OpConstant, c.addConstant(integer))
+	}
+
 	return nil
 }
 
@@ -32,4 +65,24 @@ func (c *Compiler) Bytecode() *Bytecode {
 type Bytecode struct {
 	Instructions code.Instructions
 	Constants    []object.Object // that will be evaluated by the compiler
+}
+
+// addConstant - append the constant object and
+// return the before append len - position of insertion
+func (c *Compiler) addConstant(obj object.Object) int {
+	c.constants = append(c.constants, obj)
+	return len(c.constants) - 1
+}
+
+// emit - returns the starting position of the just-emitted instruction
+func (c *Compiler) emit(op code.Opcode, operands ...int) int {
+	ins := code.Make(op, operands...)
+	pos := c.addInstruction(ins)
+	return pos
+}
+
+func (c *Compiler) addInstruction(ins []byte) int {
+	posNewInstruction := len(c.instructions)
+	c.instructions = append(c.instructions, ins...)
+	return posNewInstruction
 }

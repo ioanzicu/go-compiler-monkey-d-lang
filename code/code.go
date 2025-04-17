@@ -7,6 +7,10 @@ import (
 
 type Instructions []byte
 
+func (ins Instructions) String() string {
+	return ""
+}
+
 // Opcode - one byte wide
 // has a unique value
 // first byte in the instruction
@@ -37,6 +41,7 @@ func Lookup(op byte) (*Definition, error) {
 	return def, nil
 }
 
+// Make - encode the operands of a bytecode instruction
 func Make(op Opcode, operands ...int) []byte {
 	def, ok := definitions[op]
 	if !ok {
@@ -63,4 +68,26 @@ func Make(op Opcode, operands ...int) []byte {
 	}
 
 	return instruction
+}
+
+// ReadOperands - takes a Definition and Instructions and decode them
+// Oposite to the Make function
+func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
+	operands := make([]int, len(def.OperandWidths))
+	offset := 0
+
+	for i, width := range def.OperandWidths {
+		switch width {
+		case 2:
+			operands[i] = int(ReadUint16(ins[offset:]))
+		}
+
+		offset += width
+	}
+
+	return operands, offset
+}
+
+func ReadUint16(ins Instructions) uint16 {
+	return binary.BigEndian.Uint16(ins)
 }

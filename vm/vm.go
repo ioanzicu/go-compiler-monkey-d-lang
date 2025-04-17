@@ -40,10 +40,10 @@ func (vm *VM) Run() error {
 		// FETCH
 		op := code.Opcode(vm.instructions[ip])
 
-		// DECODE
+		// DECODE & EXECUTE
 		switch op {
 		case code.OpConstant:
-			// Decode the operands in the bytecode, after the opcode
+			// DECODE the operands in the bytecode, after the opcode
 			constIndex := code.ReadUint16(vm.instructions[ip+1:])
 			ip += 2
 
@@ -52,6 +52,16 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpAdd:
+			// DECODE
+			right := vm.pop()
+			left := vm.pop()
+			leftValue := left.(*object.Integer).Value
+			rightValue := right.(*object.Integer).Value
+
+			// EXECUTE
+			result := leftValue + rightValue
+			vm.push(&object.Integer{Value: result})
 		}
 	}
 
@@ -67,4 +77,10 @@ func (vm *VM) push(o object.Object) error {
 	vm.sp++
 
 	return nil
+}
+
+func (vm *VM) pop() object.Object {
+	o := vm.stack[vm.sp-1]
+	vm.sp--
+	return o
 }

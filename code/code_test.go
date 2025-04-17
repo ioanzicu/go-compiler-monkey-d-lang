@@ -1,6 +1,8 @@
 package code
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMake(t *testing.T) {
 	tests := []struct {
@@ -17,6 +19,11 @@ func TestMake(t *testing.T) {
 				254, // 0b11111110
 
 			},
+		},
+		{
+			OpAdd,
+			[]int{},
+			[]byte{byte(OpAdd)},
 		},
 	}
 
@@ -37,14 +44,14 @@ func TestMake(t *testing.T) {
 
 func TestInstructionString(t *testing.T) {
 	instructions := []Instructions{
-		Make(OpConstant, 1),
+		Make(OpAdd),
 		Make(OpConstant, 2),
 		Make(OpConstant, 65535),
 	}
 
-	expected := `0000 OpConstant 1
-0003 OpConstant 2
-0006 OpConstant 65535
+	expected := `0000 OpAdd
+0001 OpConstant 2
+0004 OpConstant 65535
 `
 
 	concatted := Instructions{}

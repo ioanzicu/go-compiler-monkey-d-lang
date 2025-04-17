@@ -4,6 +4,9 @@
 
 | 1. Source Code | -> | 2. LEXER  | -> | 3. PARSER | -> | 4. COMPILER | -> | 5. VIRTUAL MACHINE |
 
+- Compiler Time -> Lexer, Parser, Compiler
+- Run Time -> Virtual Machine
+
 ___
 
 ### Data Structures

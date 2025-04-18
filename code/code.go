@@ -70,6 +70,9 @@ const (
 
 	OpMinus
 	OpBang
+
+	OpJumpNotTruthy
+	OpJump
 )
 
 type Definition struct {
@@ -129,6 +132,16 @@ var definitions = map[Opcode]*Definition{
 	OpBang: &Definition{
 		Name:          "OpBang",
 		OperandWidths: []int{},
+	},
+	// not false or null
+	OpJumpNotTruthy: &Definition{
+		Name:          "OpJumpNotTruthy",
+		OperandWidths: []int{2},
+	},
+	// jump to the instruction offset
+	OpJump: &Definition{
+		Name:          "OpJump",
+		OperandWidths: []int{2},
 	},
 }
 

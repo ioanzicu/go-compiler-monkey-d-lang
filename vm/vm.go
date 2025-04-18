@@ -117,8 +117,9 @@ func (vm *VM) Run() error {
 		switch op {
 
 		case code.OpConstant:
-			// DECODE the operands in the bytecode, after the opcode
+			// 1. DECODE the operands in the bytecode, after the Opcode
 			constIndex := code.ReadUint16(vm.instructions[ip+1:])
+			// 2. Skip over two bytes of the operand in the next cycle
 			ip += 2
 
 			// EXECUTE
@@ -139,14 +140,14 @@ func (vm *VM) Run() error {
 				return err
 			}
 
-		case code.OpEqual, code.OpNotEqual, code.OpGreaterThan:
-			err := vm.executeComparison(op)
+		case code.OpFalse:
+			err := vm.push(False)
 			if err != nil {
 				return err
 			}
 
-		case code.OpFalse:
-			err := vm.push(False)
+		case code.OpEqual, code.OpNotEqual, code.OpGreaterThan:
+			err := vm.executeComparison(op)
 			if err != nil {
 				return err
 			}
@@ -165,10 +166,40 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+
+		case code.OpJump:
+			// 1. Decode the operand right after the Opcode
+			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
+			// 2. Set instruction pointer to the target of jump
+			ip = pos - 1
+
+		case code.OpJumpNotTruthy:
+			// 1. Decode the operand right after the Opcode
+			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
+			// 2. Skip over two bytes of the operand in the next cycle
+			// since OpJumpNotTruthy has OperandWidths of 2 bytes
+			ip += 2
+
+			condition := vm.pop()
+			if !isTruthy(condition) {
+				ip = pos - 1
+			}
+
 		}
 	}
 
 	return nil
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj := obj.(type) {
+
+	case *object.Boolean:
+		return obj.Value
+
+	default:
+		return true
+	}
 }
 
 func (vm *VM) push(o object.Object) error {

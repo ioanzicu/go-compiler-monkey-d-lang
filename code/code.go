@@ -53,13 +53,20 @@ type Opcode byte
 
 const (
 	OpConstant Opcode = iota
-	OpAdd
+
 	OpPop
+
+	OpAdd
 	OpSub
 	OpMul
 	OpDiv
+
 	OpTrue
 	OpFalse
+
+	OpEqual
+	OpNotEqual
+	OpGreaterThan
 )
 
 type Definition struct {
@@ -98,6 +105,18 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpTrue: &Definition{
 		Name:          "OpTrue",
+		OperandWidths: []int{},
+	},
+	OpEqual: &Definition{
+		Name:          "OpEqual",
+		OperandWidths: []int{},
+	},
+	OpNotEqual: &Definition{
+		Name:          "OpNotEqual",
+		OperandWidths: []int{},
+	},
+	OpGreaterThan: &Definition{
+		Name:          "OpGreaterThan",
 		OperandWidths: []int{},
 	},
 }

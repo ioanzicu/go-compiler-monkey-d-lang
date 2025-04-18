@@ -19,7 +19,7 @@ type vmTestCase struct {
 func runVmTests(t *testing.T, tests []vmTestCase) {
 	t.Helper()
 
-	for _, tt := range tests {
+	for i, tt := range tests {
 		program := parse(tt.input)
 
 		comp := compiler.New()
@@ -36,11 +36,11 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 
 		stackElem := vm.LastPoppedStackElem()
 
-		testExpectedObject(t, tt.expected, stackElem)
+		testExpectedObject(t, i, tt.expected, stackElem)
 	}
 }
 
-func testExpectedObject(t *testing.T, expected interface{}, actual object.Object) {
+func testExpectedObject(t *testing.T, i int, expected interface{}, actual object.Object) {
 	t.Helper()
 
 	switch expected := expected.(type) {
@@ -48,13 +48,13 @@ func testExpectedObject(t *testing.T, expected interface{}, actual object.Object
 	case int:
 		err := testIntegerObject(int64(expected), actual)
 		if err != nil {
-			t.Errorf("testIntegerObject failed: %s", err)
+			t.Errorf("%d. testIntegerObject failed: %s", i, err)
 		}
 
 	case bool:
 		err := testBooleanObject(bool(expected), actual)
 		if err != nil {
-			t.Errorf("testBooleanObject failed: %s", err)
+			t.Errorf("%d. testBooleanObject failed: %s", i, err)
 		}
 	}
 }
@@ -106,6 +106,78 @@ func TestBooleanExpressions(t *testing.T) {
 		{
 			"false",
 			false,
+		},
+		{
+			"1 < 2",
+			true,
+		},
+		{
+			"1 > 2",
+			false,
+		},
+		{
+			"1 < 1",
+			false,
+		},
+		{
+			"1 > 1",
+			false,
+		},
+		{
+			"1 == 1",
+			true,
+		},
+		{
+			"1 != 1",
+			false,
+		},
+		{
+			"1 == 2",
+			false,
+		},
+		{
+			"1 != 2",
+			true,
+		},
+		{
+			"true == true",
+			true,
+		},
+		{
+			"false == false",
+			true,
+		},
+		{
+			"true == false",
+			false,
+		},
+		{
+			"false == true",
+			false,
+		},
+		{
+			"true != false",
+			true,
+		},
+		{
+			"false != true",
+			true,
+		},
+		{
+			"(1 < 2) == true",
+			true,
+		},
+		{
+			"(1 < 2) == false",
+			false,
+		},
+		{
+			"(1 > 2) == true",
+			false,
+		},
+		{
+			"(1 > 2) == false",
+			true,
 		},
 	}
 

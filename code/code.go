@@ -83,6 +83,8 @@ const (
 	// Composite Data Types
 	OpArray
 	OpHash
+
+	OpIndex
 )
 
 type Definition struct {
@@ -172,6 +174,10 @@ var definitions = map[Opcode]*Definition{
 	OpHash: &Definition{
 		Name:          "OpHash",
 		OperandWidths: []int{2},
+	},
+	OpIndex: &Definition{
+		Name:          "OpIndex",
+		OperandWidths: []int{},
 	},
 }
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ioanzicu/monkeyd/ast"
+	"github.com/ioanzicu/monkeyd/code"
 )
 
 type ObjectType string
@@ -27,6 +28,8 @@ const (
 
 	ARRAY_OBJ ObjectType = "ARRAY"
 	HASH_OBJ  ObjectType = "HASH"
+
+	COMPILED_FUNCTION_OBJ = "COMPILED_FUNCTION_OBJ"
 )
 
 type Error struct {
@@ -186,4 +189,13 @@ func (h *Hash) Inspect() string {
 // object is usable as a hash key
 type Hashable interface {
 	HashKey() HashKey
+}
+
+type CompiledFunction struct {
+	Instructions code.Instructions
+}
+
+func (cf *CompiledFunction) Type() ObjectType { return COMPILED_FUNCTION_OBJ }
+func (cf *CompiledFunction) Inspect() string {
+	return fmt.Sprintf("CompiledFunction[%p]", cf)
 }

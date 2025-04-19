@@ -78,6 +78,8 @@ const (
 
 	OpGetGlobal
 	OpSetGlobal
+
+	OpArray
 )
 
 type Definition struct {
@@ -158,6 +160,10 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpSetGlobal: &Definition{
 		Name:          "OpSetGlobal",
+		OperandWidths: []int{2},
+	},
+	OpArray: &Definition{
+		Name:          "OpArray",
 		OperandWidths: []int{2},
 	},
 }

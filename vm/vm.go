@@ -98,6 +98,21 @@ import (
 //  	 ----------------------------
 //      | 	     OpSetGlobal 2  	 | <- Bind value on stack to 2
 //  	 ----------------------------
+//
+//
+// 			COMPILING FUNCTIONS
+//
+// 			fn() { return 3 + 30 }
+//
+//  	 ----------------------------
+// 	    | 	      OpConstant 0  	 | <- Load  3 on to the stack
+//  	 ----------------------------
+//      | 	      OpConstant 1  	 | <- Load 30 on to the stack
+//  	 ----------------------------
+//      | 	     	 OpAdd     	     | <- Add them together
+//  	 ----------------------------
+//      | 	     OpReturnValue  	 | <- Return value on top of stack
+//  	 ----------------------------
 
 const (
 	StackSize   = 2048

@@ -85,6 +85,10 @@ const (
 	OpHash
 
 	OpIndex
+
+	OpCall        // start executing the *object.CompiledFunction sitting on top of the stack
+	OpReturnValue // return the value on top of the stack to the calling context and to resume execution there
+	OpReturn      // no explicit value to return but an implicit vm.Null
 )
 
 type Definition struct {
@@ -177,6 +181,18 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpIndex: &Definition{
 		Name:          "OpIndex",
+		OperandWidths: []int{},
+	},
+	OpCall: &Definition{
+		Name:          "OpCall",
+		OperandWidths: []int{},
+	},
+	OpReturnValue: &Definition{
+		Name:          "OpReturnValue",
+		OperandWidths: []int{},
+	},
+	OpReturn: &Definition{
+		Name:          "OpReturn",
 		OperandWidths: []int{},
 	},
 }

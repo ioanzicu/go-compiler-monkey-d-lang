@@ -76,10 +76,13 @@ const (
 
 	OpNull
 
+	// Variable name bindings
 	OpGetGlobal
 	OpSetGlobal
 
+	// Composite Data Types
 	OpArray
+	OpHash
 )
 
 type Definition struct {
@@ -164,6 +167,10 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpArray: &Definition{
 		Name:          "OpArray",
+		OperandWidths: []int{2},
+	},
+	OpHash: &Definition{
+		Name:          "OpHash",
 		OperandWidths: []int{2},
 	},
 }

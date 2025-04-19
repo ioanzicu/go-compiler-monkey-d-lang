@@ -72,6 +72,32 @@ import (
 //  	 ----------------------------
 // 0010	| 	   	  	OpMinus 	 	 |
 //  	 ----------------------------
+//
+//
+// 			KEEPING TRACK OF NAMES
+//
+//
+//  	 ----------------------------
+// 	    | 	      OpConstant 0  	 | <- Load the "33" onto the stack
+//  	 ----------------------------
+//      | 	     OpSetGlobal 0  	 | <- Bind value on stack to 0
+//  	 ----------------------------
+//
+//  	 ----------------------------
+// 	    | 	      OpConstant 1  	 | <- Load the "66" onto the stack
+//  	 ----------------------------
+//      | 	     OpSetGlobal 1  	 | <- Bind value on stack to 1
+//  	 ----------------------------
+//
+//  	 ----------------------------
+// 	    | 	     OpGetGlobal 1  	 | <- Push the global bound to 1
+//  	 ----------------------------
+//      | 	     OpGetGlobal 0  	 | <- Push the global bound to 0
+//  	 ----------------------------
+//      | 	     	 OpAdd     	     | <- Add them together
+//  	 ----------------------------
+//      | 	     OpSetGlobal 2  	 | <- Bind value on stack to 2
+//  	 ----------------------------
 
 const StackSize = 2048
 

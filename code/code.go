@@ -76,7 +76,7 @@ const (
 
 	OpNull
 
-	// Variable name bindings
+	// Global scope variable name bindings
 	OpGetGlobal
 	OpSetGlobal
 
@@ -89,6 +89,10 @@ const (
 	OpCall        // start executing the *object.CompiledFunction sitting on top of the stack
 	OpReturnValue // return the value on top of the stack to the calling context and to resume execution there
 	OpReturn      // no explicit value to return but an implicit vm.Null
+
+	// Local scope variable name bindings
+	OpGetLocal
+	OpSetLocal
 )
 
 type Definition struct {
@@ -99,7 +103,7 @@ type Definition struct {
 var definitions = map[Opcode]*Definition{
 	OpConstant: &Definition{
 		Name:          "OpConstant",
-		OperandWidths: []int{2}, // 2 bytes - 0..65535
+		OperandWidths: []int{2}, // 2^16 2 bytes - 0..65535
 	},
 	OpAdd: &Definition{
 		Name:          "OpAdd",
@@ -195,6 +199,14 @@ var definitions = map[Opcode]*Definition{
 		Name:          "OpReturn",
 		OperandWidths: []int{},
 	},
+	OpGetLocal: &Definition{
+		Name:          "OpGetLocal",
+		OperandWidths: []int{1}, // 2^8 = 255 0 inclusive
+	},
+	OpSetLocal: &Definition{
+		Name:          "OpSetLocal",
+		OperandWidths: []int{1},
+	},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -225,9 +237,14 @@ func Make(op Opcode, operands ...int) []byte {
 	for i, o := range operands {
 		width := def.OperandWidths[i]
 		switch width {
+
 		case 2:
 			// split the value 16 bits 2 bytes - into 2 values of 8 bits - 1 byte each
 			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
+
+		case 1:
+			instruction[offset] = byte(o)
+
 		}
 		offset += width
 	}
@@ -243,8 +260,13 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 
 	for i, width := range def.OperandWidths {
 		switch width {
+
 		case 2:
 			operands[i] = int(ReadUint16(ins[offset:]))
+
+		case 1:
+			operands[i] = int(ReadUint8(ins[offset:]))
+
 		}
 
 		offset += width
@@ -255,4 +277,8 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 
 func ReadUint16(ins Instructions) uint16 {
 	return binary.BigEndian.Uint16(ins)
+}
+
+func ReadUint8(ins Instructions) uint8 {
+	return uint8(ins[0])
 }

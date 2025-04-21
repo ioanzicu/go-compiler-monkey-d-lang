@@ -189,7 +189,7 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpCall: &Definition{
 		Name:          "OpCall",
-		OperandWidths: []int{},
+		OperandWidths: []int{1}, // len of function arguments - max 256
 	},
 	OpReturnValue: &Definition{
 		Name:          "OpReturnValue",

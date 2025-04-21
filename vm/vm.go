@@ -135,6 +135,25 @@ import (
 //  			 ----------------------------	  |--- pushed before call
 //      		| 	     Other Value 1  	 | <--|
 //  	 		 ----------------------------
+//
+//
+//
+// 			COMPILING FUNCTION CALLS WITH ARGUMENTS
+//
+//
+//      		| 	                    	 |
+//  			 ----------------------------
+//      		| 	     	           	     |
+//  	 		 ----------------------------
+//    vm.sp --> | 	                     	 |
+//  	 		 ----------------------------
+// 				|			 Arg 2			 |
+//  			 ----------------------------
+// 	    		| 	      	 Arg 1  	     |
+//  			 ----------------------------
+//      		| 	        Function    	 |
+//  			 ----------------------------
+//
 
 const (
 	StackSize   = 2048
@@ -345,6 +364,7 @@ func (vm *VM) Run() error {
 			}
 
 		case code.OpCall:
+			vm.currentFrame().ip += 1 // skip
 			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
 			if !ok {
 				return fmt.Errorf("calling non-function")

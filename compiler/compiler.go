@@ -304,7 +304,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return err
 		}
 
-		c.emit(code.OpCall)
+		for _, arg := range node.Arguments {
+			err := c.Compile(arg)
+			if err != nil {
+				return err
+			}
+		}
+
+		c.emit(code.OpCall, len(node.Arguments))
 
 	case *ast.ReturnStatement:
 		err := c.Compile(node.ReturnValue)

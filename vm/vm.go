@@ -364,16 +364,13 @@ func (vm *VM) Run() error {
 			}
 
 		case code.OpCall:
+			numArgs := code.ReadUint8(ins[ip+1:])
 			vm.currentFrame().ip += 1 // skip
-			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
-			if !ok {
-				return fmt.Errorf("calling non-function")
+
+			err := vm.callFunction(int(numArgs))
+			if err != nil {
+				return err
 			}
-			frame := NewFrame(fn, vm.sp)
-			vm.pushFrame(frame)
-			// allocate space on the stack - create a "hole"
-			// reserve fn.NumLocals slots on the stack for local bindings
-			vm.sp = frame.basePointer + fn.NumLocals
 
 		case code.OpReturnValue:
 			returnValue := vm.pop()
@@ -416,6 +413,58 @@ func (vm *VM) Run() error {
 
 		}
 	}
+
+	return nil
+}
+
+// 			Compute Base Pointer offset BEFORE		vm.stack[vm.sp - 1]
+//
+//      		| 	                    	 | <-- basePointer + 2
+//  			 ----------------------------
+//      		| 	     	           	     | <-- basePointer + 1
+//  	 		 ----------------------------
+//    vm.sp --> | 	                     	 | <-- basePointer
+//  	 		 ----------------------------
+// 				|			 Arg 2			 |
+//  			 ----------------------------
+// 	    		| 	      	 Arg 1  	     |
+//  			 ----------------------------
+//      		| 	        Function    	 |
+//  			 ----------------------------
+//
+//
+// 							AFTER 					vm.stack[vm.sp-1-numArgs]
+//
+//      		| 	                    	 |
+//  			 ----------------------------
+//      		| 	     	           	     |
+//  	 		 ----------------------------
+//    vm.sp --> | 	                     	 | <-- basePointer + 2
+//  	 		 ----------------------------
+// 				|			 Arg 2			 | <-- basePointer + 1
+//  			 ----------------------------
+// 	    		| 	      	 Arg 1  	     | <-- basePointer
+//  			 ----------------------------
+//      		| 	        Function    	 |
+//  			 ----------------------------
+//
+
+func (vm *VM) callFunction(numArgs int) error {
+	fn, ok := vm.stack[vm.sp-1-numArgs].(*object.CompiledFunction)
+	if !ok {
+		return fmt.Errorf("calling non-function")
+	}
+
+	if numArgs != fn.NumParameters {
+		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.NumParameters, numArgs)
+	}
+
+	frame := NewFrame(fn, vm.sp-numArgs)
+	vm.pushFrame(frame)
+
+	// allocate space on the stack - create a "hole"
+	// reserve fn.NumLocals slots on the stack for local bindings
+	vm.sp = frame.basePointer + fn.NumLocals
 
 	return nil
 }

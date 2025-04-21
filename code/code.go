@@ -93,6 +93,9 @@ const (
 	// Local scope variable name bindings
 	OpGetLocal
 	OpSetLocal
+
+	// Builtin Funcitions Instructions
+	OpGetBuiltin
 )
 
 type Definition struct {
@@ -201,11 +204,15 @@ var definitions = map[Opcode]*Definition{
 	},
 	OpGetLocal: &Definition{
 		Name:          "OpGetLocal",
-		OperandWidths: []int{1}, // 2^8 = 255 0 inclusive
+		OperandWidths: []int{1}, // 2^8 = up to 256 local variable
 	},
 	OpSetLocal: &Definition{
 		Name:          "OpSetLocal",
 		OperandWidths: []int{1},
+	},
+	OpGetBuiltin: &Definition{
+		Name:          "OpGetBuiltin",
+		OperandWidths: []int{1}, // 2^8 = up to 256 builtin functions
 	},
 }
 

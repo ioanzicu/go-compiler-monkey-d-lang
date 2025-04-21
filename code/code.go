@@ -37,10 +37,16 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	}
 
 	switch operandCount {
+
 	case 0:
 		return def.Name
+
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
+
+	case 2:
+		return fmt.Sprintf("%s %d %d", def.Name, operands[0], operands[1])
+
 	}
 
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)
@@ -96,6 +102,8 @@ const (
 
 	// Builtin Funcitions Instructions
 	OpGetBuiltin
+
+	OpClosure
 )
 
 type Definition struct {
@@ -213,6 +221,16 @@ var definitions = map[Opcode]*Definition{
 	OpGetBuiltin: &Definition{
 		Name:          "OpGetBuiltin",
 		OperandWidths: []int{1}, // 2^8 = up to 256 builtin functions
+	},
+	OpClosure: &Definition{
+		Name: "OpClosure",
+		OperandWidths: []int{
+			2, // bytes - constant index, where in the constant pool we can find
+			// the *object.CompiledFunction that’s to be converted into a closure
+			// 2 bytes wide because the OpConstant is 2 bytes wide
+			1, // max 256 - free variables sit on the stack and need
+			// to be transferred to the about-to-be-created closure
+		},
 	},
 }
 

@@ -619,3 +619,88 @@ func TestBuiltinFunctions(t *testing.T) {
 
 	runVmTests(t, tests)
 }
+
+func TestClosures(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let newClosure = fn(x) {
+				fn() { x; };
+			};
+			let closure = newClosure(33);
+			closure();
+			`,
+			expected: 33,
+		},
+		{
+			input: `
+			let newAdder = fn(x, y) {
+				fn(z) {
+					x + y + z
+				};
+			};
+			let adder = newAdder(3, 10);
+			adder(20);
+			`,
+			expected: 33,
+		},
+		{
+			input: `
+			let newAdder = fn(x, y) {
+				let z = x + y;
+				fn(w) {
+					z + w
+				};
+			};
+			let adder = newAdder(3, 10);
+			adder(20);
+			`,
+			expected: 33,
+		},
+		{
+			input: `
+			let newAdderOuter = fn(x, y) {
+				let z = x + y;
+				fn(w) {
+					let q = w + z;
+					fn(l) {
+						q + l;
+					};
+				};
+			};
+			let newAdderInner = newAdderOuter(3, 10)
+			let adder = newAdderInner(10);
+			adder(10)
+			`,
+			expected: 33,
+		},
+		{
+			input: `
+			let x = 1;
+			let newAdderOuter = fn(y) {
+				fn(z) {
+					fn(q) { x + y + z + q; };
+				};
+			};
+			let newAdderInner = newAdderOuter(2);
+			let adder = newAdderInner(3)
+			adder(27)
+			`,
+			expected: 33,
+		},
+		{
+			input: `
+			let newClosure = fn(x, y) {
+				let one = fn() { x; };
+				let two = fn() { y; };
+				fn() { one() + two (); };
+			};
+			let closure = newClosure(3, 30)
+			closure();
+			`,
+			expected: 33,
+		},
+	}
+
+	runVmTests(t, tests)
+}

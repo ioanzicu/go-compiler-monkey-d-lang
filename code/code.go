@@ -104,6 +104,7 @@ const (
 	OpGetBuiltin
 
 	OpClosure
+	OpGetFree
 )
 
 type Definition struct {
@@ -231,6 +232,10 @@ var definitions = map[Opcode]*Definition{
 			1, // max 256 - free variables sit on the stack and need
 			// to be transferred to the about-to-be-created closure
 		},
+	},
+	OpGetFree: &Definition{
+		Name:          "OpGetFree",
+		OperandWidths: []int{1},
 	},
 }
 
